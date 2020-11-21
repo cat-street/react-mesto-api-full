@@ -1,0 +1,21 @@
+.form__item {
+  display: block;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .2);
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 2.5;
+  outline: none;
+}
+
+.form__item::placeholder {
+  color: #c4c4c4;
+}
+
+@media all and (max-width: 520px) {
+  .form__item {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,15 @@
+@import url('./_type/button_type_edit.css');
+@import url('./_type/button_type_add.css');
+@import url('./_type/button_type_like.css');
+@import url('./_type/button_type_trash.css');
+@import url('./_type/button_type_close.css');
+@import url('./_type/button_type_submit.css');
+@import url('./_type/button_type_auth-form.css');
+@import url('./_theme/button_theme_dark.css');
+@import url('./_liked/button_liked.css');
+
+.button {
+  cursor: pointer;
+  display: block;
+  box-shadow: none;
+}

@@ -1,0 +1,10 @@
+.popup__title_type_register {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+@media all and (max-width: 520px) {
+  .popup__title_type_register {
+    font-size: 20px;
+  }
+}

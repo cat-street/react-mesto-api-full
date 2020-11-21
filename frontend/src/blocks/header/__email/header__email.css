@@ -1,0 +1,13 @@
+.header__email {
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 0;
+}
+
+@media all and (max-width: 520px) {
+  .header__email {
+    margin: 0 27px 18px;
+  }
+}

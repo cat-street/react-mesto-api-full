@@ -1,0 +1,27 @@
+@import url('./__info/header__info.css');
+@import url('./__info/_opened/header__info_opened.css');
+@import url('./__email/header__email.css');
+@import url('./__container/header__container.css');
+@import url('./__link/header__link.css');
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(84, 84, 84, .7);
+}
+
+@media all and (max-width: 768px) {
+  .header {
+    padding-bottom: 31px;
+  }
+}
+
+@media all and (max-width: 520px) {
+  .header {
+    flex-direction: column-reverse;
+    padding-bottom: 0;
+    align-items: stretch;
+  }
+}

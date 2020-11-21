@@ -1,0 +1,18 @@
+.profile__header {
+  margin: 0 0 6px;
+  font-weight: 500;
+  font-size: 42px;
+  line-height: 1.333;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@media all and (max-width: 768px) {
+  .profile__header {
+    font-size: 27px;
+    line-height: 2.074;
+    margin-bottom: 0;
+  }
+}
+

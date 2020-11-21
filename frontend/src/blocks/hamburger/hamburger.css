@@ -1,0 +1,48 @@
+@import url('./__bar/hamburger__bar.css');
+@import url('./_opened/hamburger_opened.css');
+
+.hamburger {
+  width: 24px;
+  height: 20px;
+  margin-right: 27px;
+  position: relative;
+  background-color: #000;
+  cursor: pointer;
+  display: none;
+}
+
+.hamburger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 3px;
+  background-image: url('../../images/line.svg');
+  transition: transform 200ms ease-out;
+}
+
+.hamburger::after {
+  content: '';
+  position: absolute;
+  top: 17px;
+  left: 0;
+  width: 24px;
+  height: 3px;
+  background-image: url('../../images/line.svg');
+  transition: transform 200ms ease-out;
+}
+
+.hamburger_opened::before {
+  transform: translateY(8.5px) rotate(45deg);
+}
+
+.hamburger_opened::after {
+  transform: translateY(-8.5px) rotate(-45deg);
+}
+
+@media all and (max-width: 520px) {
+  .hamburger {
+    display: block;
+  }
+}

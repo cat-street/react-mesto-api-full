@@ -1,0 +1,17 @@
+.form__input-error {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  color: #FF0000;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 12px;
+  visibility: hidden;
+  z-index: 1;
+}
+
+@media all and (max-width: 520px) {
+  .form__input-error {
+    font-size: 10px;
+    top: calc(100% + 2px);
+  }
+}

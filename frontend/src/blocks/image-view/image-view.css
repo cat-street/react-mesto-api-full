@@ -1,0 +1,9 @@
+@import url('./__image/image-view__image.css');
+@import url('./__caption/image-view__caption.css');
+
+.image-view {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

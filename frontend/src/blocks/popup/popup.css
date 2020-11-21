@@ -1,0 +1,25 @@
+@import url('./__container/popup__container.css');
+@import url('./__container/_type/popup__container_type_form.css');
+@import url('./__container/_type/popup__container_type_image.css');
+@import url('./__container/_type/popup__container_type_tooltip.css');
+@import url('./__title/popup__title.css');
+@import url('./__title/_type/popup__title_type_register.css');
+@import url('./_theme/popup_theme_lighter.css');
+@import url('./_theme/popup_theme_darker.css');
+@import url('./__reg-status/popup__reg-status.css');
+@import url('./__reg-status/_type/popup__reg-status_type_success.css');
+@import url('./__reg-status/_type/popup__reg-status_type_failure.css');
+
+.popup {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  padding: 0 20px;
+  transition: visibility 300ms, opacity 300ms;
+}

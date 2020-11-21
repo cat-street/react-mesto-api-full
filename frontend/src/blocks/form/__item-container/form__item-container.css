@@ -1,0 +1,19 @@
+.form__item-container {
+  display: block;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.form__item-container:last-of-type {
+  margin-bottom: 48px;
+}
+
+@media all and (max-width: 520px) {
+  .form__item-container {
+    margin-bottom: 20px;
+  }
+
+  .form__item-container:last-of-type {
+    margin-bottom: 35px;
+  }
+}

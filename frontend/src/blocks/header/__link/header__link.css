@@ -1,0 +1,17 @@
+.header__link {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 18px;
+  padding-top: 8px;
+}
+
+@media all and (max-width: 920px) {
+  .header__link {
+    margin-right: 27px;
+  }
+}
+
+@media all and (max-width: 768px) {
+  .header__link {
+    font-size: 14px;
+  }
+}

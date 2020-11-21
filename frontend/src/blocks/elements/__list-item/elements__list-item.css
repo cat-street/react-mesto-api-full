@@ -1,0 +1,11 @@
+.elements__list-item {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  transition: all 300ms;
+}
+
+.elements__list-item:hover {
+  box-shadow: 0 0 0 1px #fff;
+}

@@ -1,0 +1,28 @@
+.header__info {
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.22;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+}
+
+@media all and (max-width: 920px) {
+  .header__info {
+    padding-right: 27px;
+  }
+}
+
+@media all and (max-width: 520px) {
+  .header__info {
+    width: 100%;
+    text-align: center;
+    display: block;
+    border-bottom: 1px solid rgba(84, 84, 84, .7);
+    height: 0;
+    padding: 0;
+    visibility: hidden;
+    transition: padding 300ms;
+  }
+}

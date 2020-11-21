@@ -1,0 +1,37 @@
+{
+  "name": "express-mesto",
+  "version": "1.0.0",
+  "description": "Yandex Mesto project's backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "fix": "eslint ./*.js --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cat-street/express-mesto.git"
+  },
+  "keywords": [
+    "javascript",
+    "node",
+    "express"
+  ],
+  "author": "Andrey Kudryavtsev <catlogic@ya.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cat-street/express-mesto/issues"
+  },
+  "homepage": "https://github.com/cat-street/express-mesto",
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9"
+  }
+}

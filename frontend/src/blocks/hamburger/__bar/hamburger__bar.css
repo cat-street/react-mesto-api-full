@@ -1,0 +1,16 @@
+.hamburger__bar {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 24px;
+  height: 3px;
+  background-image: url('../../../images/line.svg');
+  transition: all 200ms ease-out;
+  transform-origin: 0 50%;
+}
+
+.hamburger_opened .hamburger__bar {
+  width: 0;
+  opacity: 0;
+}
+

@@ -1,0 +1,27 @@
+.button_type_close {
+  border: 0;
+  background: url('../../../images/button-add.svg') center center / 100% 100% no-repeat;
+  transform: rotate(45deg);
+  outline: none;
+  width: 41px;
+  height: 41px;
+  position: absolute;
+  right: -38px;
+  top: -38px;
+  transition: opacity 200ms;
+  padding: 0;
+}
+
+.button_type_close:hover {
+  opacity: .6;
+}
+
+@media all and (max-width: 520px) {
+  .button_type_close {
+    width: 30px;
+    height: 30px;
+    left: 50%;
+    top: -65px;
+    transform: translate(-50%) rotate(45deg);
+  }
+}

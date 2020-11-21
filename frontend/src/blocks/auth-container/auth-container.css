@@ -1,0 +1,14 @@
+@import url('./__info/auth-container__info.css');
+
+.auth-container {
+  max-width: 358px;
+  padding: 60px 0 80px;
+  margin: 0 auto;
+}
+
+@media all and (max-width: 520px) {
+  .auth-container {
+    max-width: 260px;
+    padding: 40px 0 80px;
+  }
+}
