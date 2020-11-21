@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { validator } = require('../utils/validator');
+const { urlValidator } = require('../utils/validator');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -12,7 +12,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле \'Ссылка\' обязательно!'],
     validate: {
-      validator,
+      validator: urlValidator,
       message: 'Недопустимый URL!',
     },
   },

@@ -23,16 +23,26 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    email,
+    password,
+    name,
+    about,
+    avatar,
+  } = req.body;
 
-  User.create({ name, about, avatar })
+  User.create({
+    email,
+    password,
+    name,
+    about,
+    avatar,
+  })
     .then((user) => res.send(user))
     .catch((err) => {
       const ERROR_CODE = 400;
       if (err.name === 'ValidationError') {
-        return res
-          .status(ERROR_CODE)
-          .send({ message: err.message });
+        return res.status(ERROR_CODE).send({ message: err.message });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
@@ -45,15 +55,13 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     owner,
     { name, about },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .then((user) => res.send(user))
     .catch((err) => {
       const ERROR_CODE = 400;
       if (err.name === 'ValidationError') {
-        return res
-          .status(ERROR_CODE)
-          .send({ message: err.message });
+        return res.status(ERROR_CODE).send({ message: err.message });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
@@ -63,18 +71,12 @@ module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const owner = req.user._id;
 
-  User.findByIdAndUpdate(
-    owner,
-    { avatar },
-    { new: true, runValidators: true },
-  )
+  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       const ERROR_CODE = 400;
       if (err.name === 'ValidationError') {
-        return res
-          .status(ERROR_CODE)
-          .send({ message: err.message });
+        return res.status(ERROR_CODE).send({ message: err.message });
       }
       return res.status(500).send({ message: 'Произошла ошибка' });
     });
