@@ -53,3 +53,10 @@ exports.requestErrors = {
     MESSAGE: 'Пользователь с данным e-mail уже зарегистрирован',
   },
 };
+
+exports.authErrors = {
+  unauthorized: {
+    ERROR_CODE: 401,
+    MESSAGE: 'Неправильные почта или пароль',
+  },
+};

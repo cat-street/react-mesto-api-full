@@ -1,12 +1,13 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { requestErrors } = require('../utils/const');
+const { requestErrors, authErrors } = require('../utils/const');
 
 // eslint-disable-next-line no-unused-vars
 module.exports.getUsers = (_req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(requestErrors.serverError.ERROR_CODE)
+    .catch(() => res
+      .status(requestErrors.serverError.ERROR_CODE)
       .send({ message: requestErrors.serverError.MESSAGE }));
 };
 
@@ -20,7 +21,8 @@ module.exports.getUser = (req, res) => {
           .status(requestErrors.notFound.ERROR_CODE)
           .send({ message: requestErrors.notFound.USER_MESSAGE });
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
+      return res
+        .status(requestErrors.serverError.ERROR_CODE)
         .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
@@ -56,7 +58,8 @@ module.exports.createUser = (req, res) => {
           .status(requestErrors.conflict.ERROR_CODE)
           .send({ message: requestErrors.conflict.MESSAGE });
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
+      return res
+        .status(requestErrors.serverError.ERROR_CODE)
         .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
@@ -77,7 +80,8 @@ module.exports.updateProfile = (req, res) => {
           .status(requestErrors.validation.ERROR_CODE)
           .send({ message: err.message });
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
+      return res
+        .status(requestErrors.serverError.ERROR_CODE)
         .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
@@ -94,7 +98,22 @@ module.exports.updateAvatar = (req, res) => {
           .status(requestErrors.validation.ERROR_CODE)
           .send({ message: err.message });
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
+      return res
+        .status(requestErrors.serverError.ERROR_CODE)
         .send({ message: requestErrors.serverError.MESSAGE });
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUser(email, password)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(() => {
+      res
+        .status(authErrors.unauthorized.ERROR_CODE)
+        .send({ message: authErrors.unauthorized.MESSAGE });
     });
 };
