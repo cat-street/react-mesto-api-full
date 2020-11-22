@@ -1,19 +1,20 @@
 const mongoose = require('mongoose');
 const { urlValidator } = require('../utils/validator');
+const { validationErrors } = require('../utils/const');
 
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Поле \'Название\' обязательно!'],
-    minlength: [2, 'Название должно быть длиннее 1 символа'],
-    maxlength: [30, 'Название должно быть короче 30 символов'],
+    required: [true, validationErrors.cardName.REQUIRED],
+    minlength: [2, validationErrors.cardName.SHORT],
+    maxlength: [30, validationErrors.cardName.LONG],
   },
   link: {
     type: String,
-    required: [true, 'Поле \'Ссылка\' обязательно!'],
+    required: [true, validationErrors.url.REQUIRED],
     validate: {
       validator: urlValidator,
-      message: 'Недопустимый URL!',
+      message: validationErrors.url.INVALID,
     },
   },
   owner: {

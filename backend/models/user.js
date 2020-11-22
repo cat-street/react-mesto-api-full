@@ -1,39 +1,40 @@
 const mongoose = require('mongoose');
 const { emailValidator, urlValidator } = require('../utils/validator');
+const { defaultValues, validationErrors } = require('../utils/const');
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    required: [true, "Поле 'E-mail' обязательно"],
-    maxlength: [40, 'Email должен быть короче 40 символов'],
+    required: [true, validationErrors.email.REQUIRED],
+    maxlength: [30, validationErrors.email.LONG],
     unique: true,
     validate: {
       validator: emailValidator,
-      message: 'Недопустимый e-mail',
+      message: validationErrors.email.INVALID,
     },
   },
   password: {
     type: String,
-    required: [true, "Поле 'Пароль' обязательно"],
+    required: [true, validationErrors.password.REQUIRED],
   },
   name: {
     type: String,
-    required: [true, "Поле 'Имя' обязательно"],
-    minlength: [2, 'Имя должно быть длиннее 1 символа'],
-    maxlength: [30, 'Имя должно быть короче 30 символов'],
+    minlength: [2, validationErrors.name.SHORT],
+    maxlength: [30, validationErrors.name.LONG],
+    default: defaultValues.NAME,
   },
   about: {
     type: String,
-    required: [true, "Поле 'О себе' обязательно"],
-    minlength: [2, "'О себе' должно быть длиннее 1 символа"],
-    maxlength: [30, "'О себе' должно быть короче 30 символов"],
+    minlength: [2, validationErrors.about.SHORT],
+    maxlength: [30, validationErrors.about.LONG],
+    default: defaultValues.ABOUT,
   },
   avatar: {
     type: String,
-    required: [true, "Поле 'Аватар' обязательно"],
+    default: defaultValues.AVATAR,
     validate: {
       validator: urlValidator,
-      message: 'Недопустимый URL',
+      message: validationErrors.url.INVALID,
     },
   },
 });

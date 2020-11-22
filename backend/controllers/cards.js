@@ -1,10 +1,12 @@
 const Card = require('../models/card');
+const { requestErrors } = require('../utils/const');
 
 // eslint-disable-next-line no-unused-vars
 module.exports.getCards = (_req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(requestErrors.serverError.ERROR_CODE)
+      .send({ message: requestErrors.serverError.MESSAGE }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -14,13 +16,13 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
     .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') {
+      if (err.name === requestErrors.validation.ERROR_NAME) {
         return res
-          .status(ERROR_CODE)
+          .status(requestErrors.validation.ERROR_CODE)
           .send({ message: err.message });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
 
@@ -29,13 +31,13 @@ module.exports.deleteCard = (req, res) => {
     .orFail()
     .then((card) => res.send(card))
     .catch((err) => {
-      const ERROR_CODE = 404;
-      if (err.name === 'DocumentNotFoundError') {
+      if (err.name === requestErrors.notFound.ERROR_NAME) {
         return res
-          .status(ERROR_CODE)
-          .send({ message: 'Карточка не найдена' });
+          .status(requestErrors.notFound.ERROR_CODE)
+          .send({ message: requestErrors.notFound.CARD_MESSAGE });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
 
@@ -50,13 +52,13 @@ module.exports.likeCard = (req, res) => {
     .orFail()
     .then((card) => res.send(card))
     .catch((err) => {
-      const ERROR_CODE = 404;
-      if (err.name === 'DocumentNotFoundError') {
+      if (err.name === requestErrors.notFound.ERROR_NAME) {
         return res
-          .status(ERROR_CODE)
-          .send({ message: 'Карточка не найдена' });
+          .status(requestErrors.notFound.ERROR_CODE)
+          .send({ message: requestErrors.notFound.CARD_MESSAGE });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
 
@@ -71,12 +73,12 @@ module.exports.dislikeCard = (req, res) => {
     .orFail()
     .then((card) => res.send(card))
     .catch((err) => {
-      const ERROR_CODE = 404;
-      if (err.name === 'DocumentNotFoundError') {
+      if (err.name === requestErrors.notFound.ERROR_NAME) {
         return res
-          .status(ERROR_CODE)
-          .send({ message: 'Карточка не найдена' });
+          .status(requestErrors.notFound.ERROR_CODE)
+          .send({ message: requestErrors.notFound.CARD_MESSAGE });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };

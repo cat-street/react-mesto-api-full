@@ -1,10 +1,13 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const { requestErrors } = require('../utils/const');
 
 // eslint-disable-next-line no-unused-vars
 module.exports.getUsers = (_req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(requestErrors.serverError.ERROR_CODE)
+      .send({ message: requestErrors.serverError.MESSAGE }));
 };
 
 module.exports.getUser = (req, res) => {
@@ -12,13 +15,13 @@ module.exports.getUser = (req, res) => {
     .orFail()
     .then((user) => res.send(user))
     .catch((err) => {
-      const ERROR_CODE = 404;
-      if (err.name === 'DocumentNotFoundError') {
+      if (err.name === requestErrors.notFound.ERROR_NAME) {
         return res
-          .status(ERROR_CODE)
-          .send({ message: 'Пользователь не найден' });
+          .status(requestErrors.notFound.ERROR_CODE)
+          .send({ message: requestErrors.notFound.USER_MESSAGE });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
 
@@ -31,20 +34,30 @@ module.exports.createUser = (req, res) => {
     avatar,
   } = req.body;
 
-  User.create({
-    email,
-    password,
-    name,
-    about,
-    avatar,
-  })
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
+    }))
     .then((user) => res.send(user))
     .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: err.message });
+      if (err.name === requestErrors.validation.ERROR_NAME) {
+        return res
+          .status(requestErrors.validation.ERROR_CODE)
+          .send({ message: err.message });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      /** @description ошибка MongoDB, дублирующаяся запись */
+      if (err.code === requestErrors.conflict.MONGO_ERROR_CODE) {
+        return res
+          .status(requestErrors.conflict.ERROR_CODE)
+          .send({ message: requestErrors.conflict.MESSAGE });
+      }
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
 
@@ -55,15 +68,17 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(
     owner,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => res.send(user))
     .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: err.message });
+      if (err.name === requestErrors.validation.ERROR_NAME) {
+        return res
+          .status(requestErrors.validation.ERROR_CODE)
+          .send({ message: err.message });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
 
@@ -74,10 +89,12 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({ message: err.message });
+      if (err.name === requestErrors.validation.ERROR_NAME) {
+        return res
+          .status(requestErrors.validation.ERROR_CODE)
+          .send({ message: err.message });
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return res.status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
     });
 };
