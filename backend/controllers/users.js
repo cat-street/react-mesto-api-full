@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { requestErrors, authErrors } = require('../utils/const');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 // eslint-disable-next-line no-unused-vars
 module.exports.getUsers = (_req, res) => {
@@ -109,7 +112,10 @@ module.exports.login = (req, res) => {
 
   return User.findUser(email, password)
     .then((user) => {
-      res.send(user);
+      const token = jwt.sign({ _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'the-secret-key',
+        { expiresIn: '7d' });
+      res.send({ token });
     })
     .catch(() => {
       res
