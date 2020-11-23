@@ -14,6 +14,22 @@ module.exports.getUsers = (_req, res) => {
       .send({ message: requestErrors.serverError.MESSAGE }));
 };
 
+module.exports.getMe = (req, res) => {
+  User.findById(req.user._id)
+    .orFail()
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === requestErrors.notFound.ERROR_NAME) {
+        return res
+          .status(requestErrors.notFound.ERROR_CODE)
+          .send({ message: requestErrors.notFound.USER_MESSAGE });
+      }
+      return res
+        .status(requestErrors.serverError.ERROR_CODE)
+        .send({ message: requestErrors.serverError.MESSAGE });
+    });
+};
+
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
     .orFail()

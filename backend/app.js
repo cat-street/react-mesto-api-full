@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 const { login, createUser } = require('./controllers/users');
 
@@ -15,17 +16,17 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // eslint-disable-next-line no-unused-vars
-app.use((req, _res, next) => {
-  req.user = {
-    _id: '5f8f50c9a2c0db4934de758f',
-  };
-
-  next();
-});
+// app.use((req, _res, next) => {
+//   req.user = {
+//     _id: '5fba716da44c743c88445f63',
+//   };
+//   next();
+// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);
