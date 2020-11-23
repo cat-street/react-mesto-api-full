@@ -27,9 +27,18 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail()
-    .then((card) => res.send(card))
+    // eslint-disable-next-line consistent-return
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id.toString()) {
+        return res
+          .status(requestErrors.forbidden.ERROR_CODE)
+          .send({ message: requestErrors.forbidden.CARD_MESSAGE });
+      }
+      Card.findByIdAndRemove(req.params.cardId)
+        .then((deletedCard) => res.send(deletedCard));
+    })
     .catch((err) => {
       if (err.name === requestErrors.notFound.ERROR_NAME) {
         return res

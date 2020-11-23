@@ -52,6 +52,10 @@ exports.requestErrors = {
     MONGO_ERROR_CODE: 11000,
     MESSAGE: 'Пользователь с данным e-mail уже зарегистрирован',
   },
+  forbidden: {
+    ERROR_CODE: 403,
+    CARD_MESSAGE: 'Нельзя удалять чужие карточки',
+  },
 };
 
 exports.authErrors = {

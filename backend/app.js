@@ -20,14 +20,6 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// eslint-disable-next-line no-unused-vars
-// app.use((req, _res, next) => {
-//   req.user = {
-//     _id: '5fba716da44c743c88445f63',
-//   };
-//   next();
-// });
-
 app.post('/signin', login);
 app.post('/signup', createUser);
 
