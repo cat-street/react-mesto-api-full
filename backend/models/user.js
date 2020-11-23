@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, validationErrors.password.REQUIRED],
+    select: false,
   },
   name: {
     type: String,
@@ -40,11 +41,27 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.statics.findUser = async function find(email, password) {
+/**
+ * @static @method findUser
+ * @description валидировать пользователя по базе
+ * @param {string} email
+ * @param {string} password
+ */
+userSchema.statics.findUser = async function findUser(email, password) {
   const user = await this.findOne({ email }).orFail();
   const match = await bcrypt.compare(password, user.password);
   if (!match) throw new Error();
   return user;
+};
+
+/**
+ * @method toJSON
+ * @description удалить пароль из объекта ответа
+ */
+userSchema.methods.toJSON = function toJSON() {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
 };
 
 module.exports = mongoose.model('user', userSchema);

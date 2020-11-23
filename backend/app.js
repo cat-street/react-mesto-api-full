@@ -29,6 +29,7 @@ app.use((req, _res, next) => {
 
 app.post('/signin', login);
 app.post('/signup', createUser);
+
 app.use(routes);
 // eslint-disable-next-line no-unused-vars
 app.all('/*', (_req, res) => {

@@ -112,14 +112,21 @@ module.exports.login = (req, res) => {
 
   return User.findUser(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id },
+      const token = jwt.sign(
+        { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'the-secret-key',
-        { expiresIn: '7d' });
-      res.send({ token });
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 604800000,
+        httpOnly: true,
+        sameSite: true,
+      })
+        .end();
     })
     .catch(() => {
       res
         .status(authErrors.unauthorized.ERROR_CODE)
-        .send({ message: authErrors.unauthorized.MESSAGE });
+        .send({ message: authErrors.unauthorized.LOGIN_MESSAGE });
     });
 };

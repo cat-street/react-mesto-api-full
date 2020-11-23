@@ -57,6 +57,7 @@ exports.requestErrors = {
 exports.authErrors = {
   unauthorized: {
     ERROR_CODE: 401,
-    MESSAGE: 'Неправильные почта или пароль',
+    LOGIN_MESSAGE: 'Неправильные почта или пароль',
+    NOTOKEN_MESSAGE: 'Необходима авторизация',
   },
 };
