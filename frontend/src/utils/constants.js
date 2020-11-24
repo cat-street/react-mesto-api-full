@@ -6,11 +6,17 @@
  * @param {string} likes путь для добавления/снятия лайка
  */
 const apiPaths = {
+  BASE_URL: 'http://localhost:3000',
   CARDS: '/cards',
-  LIKES: '/cards/likes',
+  LIKES: '/likes',
   ME: '/users/me',
   SIGNUP: '/signup',
   SIGNIN: '/signin',
+};
+
+const apiHeaders = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json',
 };
 
 const tooltipErrorMessages = {
@@ -18,4 +24,4 @@ const tooltipErrorMessages = {
   FAILURE: `Что-то пошло не так! Попробуйте${'\u00A0'}ещё раз.`,
 };
 
-export { apiPaths, tooltipErrorMessages };
+export { apiPaths, apiHeaders, tooltipErrorMessages };

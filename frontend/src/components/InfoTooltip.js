@@ -1,7 +1,7 @@
 import React from 'react';
 import Popup from './Popup';
 
-function InfoTooltip({ regSuccess, errors, ...props }) {
+function InfoTooltip({ regSuccess, message, ...props }) {
   return (
     <Popup theme="lighter" container="tooltip" {...props}>
       <div
@@ -10,7 +10,7 @@ function InfoTooltip({ regSuccess, errors, ...props }) {
         }`}
       />
       <h2 className="popup__title popup__title_type_register">
-        {regSuccess ? errors.SUCCESS : errors.FAILURE}
+        {message}
       </h2>
     </Popup>
   );

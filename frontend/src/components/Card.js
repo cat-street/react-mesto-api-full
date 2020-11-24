@@ -5,7 +5,7 @@ import trashButtonPath from '../images/button-trash.svg';
 
 function Card({ card, onCardDelete, onCardClick, onCardLike }) {
   const currentUser = useContext(CurrentUserContext);
-  const isLiked = card.likes.some((el) => el._id === currentUser._id);
+  const isLiked = card.likes.some((el) => el === currentUser._id);
   /** @param cardRef элемент DOM для плавного удаления */
   const cardRef = useRef();
 
@@ -22,7 +22,7 @@ function Card({ card, onCardDelete, onCardClick, onCardLike }) {
         onClick={onCardClick.bind(null, card)}
       />
       {/** @description спрятать корзину если пользователь - не владелец карточки */}
-      {currentUser._id === card.owner._id && (
+      {currentUser._id === card.owner && (
         <img
           className="button button_type_trash"
           src={trashButtonPath}

@@ -8,9 +8,17 @@
   margin-bottom: 48px;
 }
 
+.auth-container .form__item-container {
+  margin-bottom: 40px;
+}
+
 @media all and (max-width: 520px) {
   .form__item-container {
     margin-bottom: 20px;
+  }
+
+  .auth-container .form__item-container {
+    margin-bottom: 30px;
   }
 
   .form__item-container:last-of-type {

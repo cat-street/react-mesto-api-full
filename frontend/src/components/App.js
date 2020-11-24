@@ -19,8 +19,6 @@ import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
-import { auth, checkUser } from '../utils/auth';
-import { setToken, getToken, removeToken } from '../utils/token';
 
 function App() {
   const history = useHistory();
@@ -54,6 +52,7 @@ function App() {
    * @param {boolean} isInfoOpened состояние скрытого меню в мобильной версии
    */
   const [isInfoOpened, setInfoOpened] = useState(false);
+  const [tooltipMessage, setTooltipMessage] = useState(tooltipErrorMessages.FAILURE);
 
   const handleEditAvatarClick = () => {
     setEditAvatarPopupOpen(true);
@@ -84,7 +83,7 @@ function App() {
       }));
       closeAllPopups(setEditProfilePopupOpen);
     } catch (error) {
-      console.error('Ошибка в запросе -', error);
+      console.error(error);
     }
   }
 
@@ -100,7 +99,7 @@ function App() {
       closeAllPopups(setEditAvatarPopupOpen);
       avatarRef.current.value = '';
     } catch (error) {
-      console.error('Ошибка в запросе -', error);
+      console.error(error);
     }
   }
 
@@ -113,7 +112,7 @@ function App() {
       setCards((cards) => [newCard, ...cards]);
       closeAllPopups(setAddPlacePopupOpen);
     } catch (error) {
-      console.error('Ошибка в запросе -', error);
+      console.error(error);
     }
   }
 
@@ -149,7 +148,7 @@ function App() {
       setTimeout(() => setCards(cards.filter((el) => el !== card)), 300);
       setCardElement({});
     } catch (error) {
-      console.error('Ошибка в запросе -', error);
+      console.error(error);
     }
   }
 
@@ -163,16 +162,16 @@ function App() {
      * @const isLiked
      * @description проверить, есть ли лайк пользователя на карточке
      */
-    const isLiked = card.likes.some((el) => el._id === currentUser._id);
+    const isLiked = card.likes.some((el) => el === currentUser._id);
     /**
      * @function changeLikeCardStatus
      * @description удалить или поставить лайк, если есть/нет на карточке
      */
     const changeLikeCardStatus = () => {
       if (isLiked) {
-        return api.deleteData(`${apiPaths.LIKES}/${card._id}`);
+        return api.deleteData(`${apiPaths.CARDS}/${card._id}${apiPaths.LIKES}`);
       } else {
-        return api.putData(`${apiPaths.LIKES}/${card._id}`);
+        return api.putData(`${apiPaths.CARDS}/${card._id}${apiPaths.LIKES}`);
       }
     };
     /** @description обновить стейт галереи */
@@ -184,7 +183,7 @@ function App() {
         setCards(newCards);
       })
       .catch((error) => {
-        console.error('Ошибка в запросе -', error);
+        console.error(error);
       });
   };
 
@@ -200,18 +199,29 @@ function App() {
     setNewUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
+  /**
+   * @function
+   * @description установить сообщение инфоокна
+   * @param {string} message
+   */
+  const setTooltip = (message) => {
+    setTooltipMessage(message);
+  }
+
   async function handleRegistration(evt, resetForm) {
     evt.preventDefault();
     try {
-      const regStatus = await auth(newUser, apiPaths.SIGNUP);
+      const regStatus = await api.auth(apiPaths.SIGNUP, newUser);
       setInfoTooltipOpen(true);
       if (regStatus) {
         resetForm();
         setRegSuccess(true);
+        setTooltip(tooltipErrorMessages.SUCCESS);
         setNewUser({ password: '', email: '' });
         history.push('/sign-in');
       }
     } catch (error) {
+      setTooltip(error.message);
       setInfoTooltipOpen(true);
       console.error(error);
     }
@@ -220,23 +230,29 @@ function App() {
   async function handleSignIn(evt, resetForm) {
     evt.preventDefault();
     try {
-      const regStatus = await auth(newUser, apiPaths.SIGNIN);
-      if (regStatus) {
+      const response = await api.auth(apiPaths.SIGNIN, newUser);
+      if (response) {
         resetForm();
-        setToken(regStatus.token);
-        setCurrentUser((prevData) => ({ ...prevData, email: newUser.email }));
+        setCurrentUser({
+          name: response.name,
+          about: response.about,
+          avatar: response.avatar,
+          email: response.email,
+          _id: response._id,
+        });
         setNewUser({ password: '', email: '' });
+        setTooltip(tooltipErrorMessages.FAILURE);
         setIsLoggedIn(true);
         showMain();
       }
     } catch (error) {
+      setTooltip(error.message);
       setInfoTooltipOpen(true);
       console.error(error);
     }
   }
 
   const signOut = () => {
-    removeToken();
     setIsLoggedIn(false);
     setCards([]);
     setCurrentUser({
@@ -246,46 +262,48 @@ function App() {
       avatar: placeholderPath,
       _id: null,
     });
+    setNewUser((prevUser) => ({ ...prevUser, password: '' }));
+    setTooltip(tooltipErrorMessages.FAILURE);
     history.push('/sign-in');
   };
 
-  const checkToken = useCallback(async () => {
+  const checkCookie = useCallback(async () => {
     try {
-      const token = getToken();
-      if (token) {
-        const response = await checkUser(token, apiPaths.ME);
-        setCurrentUser((prevData) => ({ ...prevData, email: response.data.email }));
-        setIsLoggedIn(true);
-        showMain();
-      }
+      const response = await api.getData(apiPaths.ME);
+      setCurrentUser({
+        name: response.name,
+        about: response.about,
+        avatar: response.avatar,
+        email: response.email,
+        _id: response._id,
+      });
+      setNewUser((prevUser) => ({ ...prevUser, password: '' }));
+      setIsLoggedIn(true);
+      showMain();
     } catch (error) {
       console.error(error);
     }
   }, []);
 
-  const showMain = () => {
-    /** @description запросить данные о пользователе с сервера */
-    Promise.all([api.getData(apiPaths.ME), api.getData(apiPaths.CARDS)])
+  const showMain = async () => {
+    try {
+      /** @description запросить галерею с сервера */
+      const cardsList = await api.getData(apiPaths.CARDS);
       /**
-       * @callback
-       * @description установить имя, о себе и аватар в стейт,
-       * записать первоначальную галерею в стейт
-       * @param {object} data объект с данными пользователя
+       * @description записать первоначальную галерею в стейт
        * @param {object} cardsList массив с объектами карточек
        */
-      .then(([data, cardsList]) => {
-        setCurrentUser((prevData) => ({ ...prevData, ...data }));
-        setCards(cardsList);
-      })
-      .catch((error) => {
-        console.error('Ошибка в запросе -', error);
-      });
+      setCards(cardsList);
+    }
+    catch (error) {
+      console.error(error);
+    };
   };
 
   useEffect(() => {
-    checkToken();
+    checkCookie();
     setInfoOpened(false);
-  }, [checkToken]);
+  }, [checkCookie]);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -322,7 +340,7 @@ function App() {
 
         <InfoTooltip
           regSuccess={regSuccess}
-          errors={tooltipErrorMessages}
+          message={tooltipMessage}
           isOpen={isInfoTooltipOpen}
           onClose={closeAllPopups.bind(null, setInfoTooltipOpen)}
         />

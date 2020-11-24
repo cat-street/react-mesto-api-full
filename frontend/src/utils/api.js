@@ -1,3 +1,5 @@
+import { apiPaths, apiHeaders } from '../utils/constants';
+
 /**
  * @class
  * @description Создает объект доступа к API
@@ -7,26 +9,7 @@ class Api {
   constructor(parameters) {
     this._baseUrl = parameters.baseUrl;
     this._headers = parameters.headers;
-  }
-
-  /**
-   * @method
-   * @private
-   * @description Обработка ошибок статуса ответа сервера
-   * @param {object} res Объект ответа сервера
-   */
-  // eslint-disable-next-line class-methods-use-this
-  _serverErrorsHandler(res) {
-    if (res.ok) {
-      return res.json();
-    } else {
-      return res.json().then((statusError) => {
-        throw new Error(
-          // eslint-disable-next-line max-len
-          `Ошибка на сервере: ${statusError.message} (${res.statusText} - ${res.status})`
-        );
-      });
-    }
+    this._credentials = parameters.credentials;
   }
 
   /**
@@ -36,14 +19,22 @@ class Api {
    * @param {string} method
    * @param {string} body
    */
-  _fetchHandler(infoPath, method, body = null) {
-    return fetch(`${this._baseUrl}${infoPath}`, {
+  async _fetchHandler(infoPath, method, body = null) {
+    const res = await fetch(`${this._baseUrl}${infoPath}`, {
       method: method,
       headers: this._headers,
       body: body,
-    }).then((res) => {
-      return this._serverErrorsHandler(res);
+      credentials: this._credentials,
     });
+    if (res.ok) {
+      return res.json();
+    }
+    const statusError = await res.json();
+    let message = statusError.message;
+    if (statusError.validation) {
+      message = statusError.validation.body.message;
+    }
+    throw new Error(message);
   }
 
   /**
@@ -124,6 +115,17 @@ class Api {
   putData(infoPath) {
     return this._fetchHandler(infoPath, 'PUT');
   }
+
+  auth(infoPath, { password, email }) {
+    return this._fetchHandler(
+      infoPath,
+      'POST',
+      JSON.stringify({
+        password,
+        email,
+      })
+    );
+  }
 }
 
 /**
@@ -134,11 +136,9 @@ class Api {
  * @param {object} header Заголовки для запросов
  */
 const api = new Api({
-  baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-14',
-  headers: {
-    authorization: 'fbaa6fd0-e7f0-4f9e-9a88-0f5ca2f1027e',
-    'Content-Type': 'application/json',
-  },
+  baseUrl: apiPaths.BASE_URL,
+  headers: apiHeaders,
+  credentials: 'include',
 });
 
 export default api;
