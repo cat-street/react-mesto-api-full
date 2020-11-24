@@ -29,7 +29,17 @@ app.all('/*', (_req, res) => {
   res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
 });
 
+// eslint-disable-next-line no-unused-vars
+app.use((err, _req, res, _next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500 ? 'Внутренняя ошибка сервера' : message,
+    });
+});
+
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`Сервер запущен на порте ${PORT}`);
+  console.log(`Сервер запущен на порту: ${PORT}`);
 });

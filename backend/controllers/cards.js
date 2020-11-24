@@ -1,15 +1,17 @@
 const Card = require('../models/card');
-const { requestErrors } = require('../utils/const');
+const BadRequestError = require('../errors/bad-request');
+const ForbiddenError = require('../errors/forbidden');
+const NotFoundError = require('../errors/not-found');
+const { requestErrors } = require('../utils/error-messages');
 
 // eslint-disable-next-line no-unused-vars
-module.exports.getCards = (_req, res) => {
+module.exports.getCards = (_req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => res.status(requestErrors.serverError.ERROR_CODE)
-      .send({ message: requestErrors.serverError.MESSAGE }));
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
@@ -17,40 +19,32 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === requestErrors.validation.ERROR_NAME) {
-        return res
-          .status(requestErrors.validation.ERROR_CODE)
-          .send({ message: err.message });
+        const error = new BadRequestError(err.message.replace(/^.+: /g, ''));
+        next(error);
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
+      next(err);
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail()
+    // .orFail()
     // eslint-disable-next-line consistent-return
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError(requestErrors.notFound.CARD_MESSAGE);
+      }
+      /** @description Запретить удалять чужие карточки */
       if (card.owner.toString() !== req.user._id.toString()) {
-        return res
-          .status(requestErrors.forbidden.ERROR_CODE)
-          .send({ message: requestErrors.forbidden.CARD_MESSAGE });
+        throw new ForbiddenError(requestErrors.forbidden.CARD_MESSAGE);
       }
       Card.findByIdAndRemove(req.params.cardId)
         .then((deletedCard) => res.send(deletedCard));
     })
-    .catch((err) => {
-      if (err.name === requestErrors.notFound.ERROR_NAME) {
-        return res
-          .status(requestErrors.notFound.ERROR_CODE)
-          .send({ message: requestErrors.notFound.CARD_MESSAGE });
-      }
-      return res.status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
-    });
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   const owner = req.user._id;
 
   Card.findByIdAndUpdate(
@@ -58,20 +52,16 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: owner } },
     { new: true },
   )
-    .orFail()
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === requestErrors.notFound.ERROR_NAME) {
-        return res
-          .status(requestErrors.notFound.ERROR_CODE)
-          .send({ message: requestErrors.notFound.CARD_MESSAGE });
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError(requestErrors.notFound.CARD_MESSAGE);
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
-    });
+      res.send(card);
+    })
+    .catch(next);
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   const owner = req.user._id;
 
   Card.findByIdAndUpdate(
@@ -79,15 +69,11 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: owner } },
     { new: true },
   )
-    .orFail()
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === requestErrors.notFound.ERROR_NAME) {
-        return res
-          .status(requestErrors.notFound.ERROR_CODE)
-          .send({ message: requestErrors.notFound.CARD_MESSAGE });
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError(requestErrors.notFound.CARD_MESSAGE);
       }
-      return res.status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
-    });
+      res.send(card);
+    })
+    .catch(next);
 };

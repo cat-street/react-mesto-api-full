@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { authErrors } = require('../utils/const');
+const { authErrors } = require('../utils/error-messages');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
 
   if (!token) {
     return res
-      .status(authErrors.unauthorized.ERROR_CODE)
+      .status(400)
       .send({ message: authErrors.unauthorized.NOTOKEN_MESSAGE });
   }
 
@@ -22,7 +22,7 @@ module.exports = (req, res, next) => {
     );
   } catch (err) {
     return res
-      .status(authErrors.unauthorized.ERROR_CODE)
+      .status(400)
       .send({ message: authErrors.unauthorized.NOTOKEN_MESSAGE });
   }
 

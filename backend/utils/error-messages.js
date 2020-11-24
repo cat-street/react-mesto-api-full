@@ -1,9 +1,3 @@
-exports.defaultValues = {
-  NAME: 'Жак-Ив Кусто',
-  ABOUT: 'Исследователь',
-  AVATAR: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-};
-
 exports.validationErrors = {
   email: {
     REQUIRED: "Поле 'E-mail' обязательно",
@@ -33,34 +27,25 @@ exports.validationErrors = {
 };
 
 exports.requestErrors = {
-  serverError: {
-    ERROR_CODE: 500,
-    MESSAGE: 'Произошла ошибка',
-  },
   notFound: {
-    ERROR_CODE: 404,
     ERROR_NAME: 'DocumentNotFoundError',
     USER_MESSAGE: 'Пользователь не найден',
     CARD_MESSAGE: 'Карточка не найдена',
   },
   validation: {
-    ERROR_CODE: 400,
     ERROR_NAME: 'ValidationError',
   },
   conflict: {
-    ERROR_CODE: 409,
     MONGO_ERROR_CODE: 11000,
     MESSAGE: 'Пользователь с данным e-mail уже зарегистрирован',
   },
   forbidden: {
-    ERROR_CODE: 403,
     CARD_MESSAGE: 'Нельзя удалять чужие карточки',
   },
 };
 
 exports.authErrors = {
   unauthorized: {
-    ERROR_CODE: 401,
     LOGIN_MESSAGE: 'Неправильные почта или пароль',
     NOTOKEN_MESSAGE: 'Необходима авторизация',
   },

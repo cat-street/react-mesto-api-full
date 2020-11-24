@@ -1,52 +1,44 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { requestErrors, authErrors } = require('../utils/const');
+const BadRequestError = require('../errors/bad-request');
+const ConflictError = require('../errors/conflict');
+const NotFoundError = require('../errors/not-found');
+const UnauthorizedError = require('../errors/unauthorized');
+const { requestErrors, authErrors } = require('../utils/error-messages');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 // eslint-disable-next-line no-unused-vars
-module.exports.getUsers = (_req, res) => {
+module.exports.getUsers = (_req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res
-      .status(requestErrors.serverError.ERROR_CODE)
-      .send({ message: requestErrors.serverError.MESSAGE }));
+    .catch(next);
 };
 
-module.exports.getMe = (req, res) => {
+module.exports.getMe = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === requestErrors.notFound.ERROR_NAME) {
-        return res
-          .status(requestErrors.notFound.ERROR_CODE)
-          .send({ message: requestErrors.notFound.USER_MESSAGE });
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(requestErrors.notFound.USER_MESSAGE);
       }
-      return res
-        .status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
-    });
+      res.send(user);
+    })
+    .catch(next);
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === requestErrors.notFound.ERROR_NAME) {
-        return res
-          .status(requestErrors.notFound.ERROR_CODE)
-          .send({ message: requestErrors.notFound.USER_MESSAGE });
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(requestErrors.notFound.USER_MESSAGE);
       }
-      return res
-        .status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
-    });
+      res.send(user);
+    })
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     email,
     password,
@@ -67,23 +59,19 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === requestErrors.validation.ERROR_NAME) {
-        return res
-          .status(requestErrors.validation.ERROR_CODE)
-          .send({ message: err.message });
+        const error = new BadRequestError(err.message.replace(/^.+: /g, ''));
+        next(error);
       }
       /** @description ошибка MongoDB, дублирующаяся запись */
       if (err.code === requestErrors.conflict.MONGO_ERROR_CODE) {
-        return res
-          .status(requestErrors.conflict.ERROR_CODE)
-          .send({ message: requestErrors.conflict.MESSAGE });
+        const error = new ConflictError(requestErrors.conflict.MESSAGE);
+        next(error);
       }
-      return res
-        .status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
+      next(err);
     });
 };
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
   const owner = req.user._id;
 
@@ -92,42 +80,49 @@ module.exports.updateProfile = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(requestErrors.notFound.USER_MESSAGE);
+      }
+      res.send(user);
+    })
     .catch((err) => {
       if (err.name === requestErrors.validation.ERROR_NAME) {
-        return res
-          .status(requestErrors.validation.ERROR_CODE)
-          .send({ message: err.message });
+        const error = new BadRequestError(err.message.replace(/^.+: /g, ''));
+        next(error);
       }
-      return res
-        .status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
+      next(err);
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const owner = req.user._id;
 
   User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.send(user))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(requestErrors.notFound.USER_MESSAGE);
+      }
+      res.send(user);
+    })
     .catch((err) => {
       if (err.name === requestErrors.validation.ERROR_NAME) {
-        return res
-          .status(requestErrors.validation.ERROR_CODE)
-          .send({ message: err.message });
+        const error = new BadRequestError(err.message.replace(/^.+: /g, ''));
+        next(error);
       }
-      return res
-        .status(requestErrors.serverError.ERROR_CODE)
-        .send({ message: requestErrors.serverError.MESSAGE });
+      next(err);
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUser(email, password)
+  User.findUser(email, password)
     .then((user) => {
+      if (!user) {
+        throw new NotFoundError(requestErrors.notFound.USER_MESSAGE);
+      }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'the-secret-key',
@@ -142,7 +137,7 @@ module.exports.login = (req, res) => {
     })
     .catch(() => {
       res
-        .status(authErrors.unauthorized.ERROR_CODE)
+        .status(401)
         .send({ message: authErrors.unauthorized.LOGIN_MESSAGE });
     });
 };
