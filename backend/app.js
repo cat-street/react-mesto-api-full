@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const routes = require('./routes');
 const { login, createUser } = require('./controllers/users');
 
@@ -22,6 +24,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.post('/signin', login);
 app.post('/signup', createUser);
@@ -31,6 +34,8 @@ app.use(routes);
 app.all('/*', () => {
   throw new NotFoundError(requestErrors.notFound.URL_MESSAGE);
 });
+
+app.use(errorLogger);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {
