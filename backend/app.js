@@ -3,13 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
+const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-const routes = require('./routes');
-const { login, createUser } = require('./controllers/users');
-
 const NotFoundError = require('./errors/not-found');
 const { requestErrors } = require('./utils/error-messages');
+
+const routes = require('./routes');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -26,9 +26,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
 
-app.post('/signin', login);
-app.post('/signup', createUser);
-
 app.use(routes);
 
 app.all('/*', () => {
@@ -36,6 +33,7 @@ app.all('/*', () => {
 });
 
 app.use(errorLogger);
+app.use(errors());
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {
