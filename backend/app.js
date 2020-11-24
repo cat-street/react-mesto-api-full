@@ -6,6 +6,9 @@ const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 const { login, createUser } = require('./controllers/users');
 
+const NotFoundError = require('./errors/not-found');
+const { requestErrors } = require('./utils/error-messages');
+
 const app = express();
 const { PORT = 3000 } = process.env;
 
@@ -24,9 +27,9 @@ app.post('/signin', login);
 app.post('/signup', createUser);
 
 app.use(routes);
-// eslint-disable-next-line no-unused-vars
-app.all('/*', (_req, res) => {
-  res.status(404).json({ message: 'Запрашиваемый ресурс не найден' });
+
+app.all('/*', () => {
+  throw new NotFoundError(requestErrors.notFound.URL_MESSAGE);
 });
 
 // eslint-disable-next-line no-unused-vars

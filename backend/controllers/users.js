@@ -4,8 +4,7 @@ const User = require('../models/user');
 const BadRequestError = require('../errors/bad-request');
 const ConflictError = require('../errors/conflict');
 const NotFoundError = require('../errors/not-found');
-const UnauthorizedError = require('../errors/unauthorized');
-const { requestErrors, authErrors } = require('../utils/error-messages');
+const { requestErrors } = require('../utils/error-messages');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -118,11 +117,8 @@ module.exports.updateAvatar = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findUser(email, password)
+  return User.findUser(email, password)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError(requestErrors.notFound.USER_MESSAGE);
-      }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'the-secret-key',
@@ -135,9 +131,5 @@ module.exports.login = (req, res, next) => {
       })
         .end();
     })
-    .catch(() => {
-      res
-        .status(401)
-        .send({ message: authErrors.unauthorized.LOGIN_MESSAGE });
-    });
+    .catch(next);
 };

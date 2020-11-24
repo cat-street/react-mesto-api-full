@@ -1,17 +1,14 @@
 const jwt = require('jsonwebtoken');
+const UnauthorizedError = require('../errors/unauthorized');
 const { authErrors } = require('../utils/error-messages');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 // eslint-disable-next-line consistent-return
-module.exports = (req, res, next) => {
+module.exports = (req, _res, next) => {
   const token = req.cookies.jwt;
 
-  if (!token) {
-    return res
-      .status(400)
-      .send({ message: authErrors.unauthorized.NOTOKEN_MESSAGE });
-  }
+  if (!token) throw new UnauthorizedError(authErrors.unauthorized.NOTOKEN_MESSAGE);
 
   let payload;
 
@@ -21,9 +18,7 @@ module.exports = (req, res, next) => {
       NODE_ENV === 'production' ? JWT_SECRET : 'the-secret-key',
     );
   } catch (err) {
-    return res
-      .status(400)
-      .send({ message: authErrors.unauthorized.NOTOKEN_MESSAGE });
+    throw new UnauthorizedError(authErrors.unauthorized.NOTOKEN_MESSAGE);
   }
 
   req.user = payload;

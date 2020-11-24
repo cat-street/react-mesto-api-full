@@ -31,6 +31,7 @@ exports.requestErrors = {
     ERROR_NAME: 'DocumentNotFoundError',
     USER_MESSAGE: 'Пользователь не найден',
     CARD_MESSAGE: 'Карточка не найдена',
+    URL_MESSAGE: 'Запрашиваемый ресурс не найден',
   },
   validation: {
     ERROR_NAME: 'ValidationError',
@@ -46,7 +47,7 @@ exports.requestErrors = {
 
 exports.authErrors = {
   unauthorized: {
-    LOGIN_MESSAGE: 'Неправильные почта или пароль',
+    LOGIN_MESSAGE: 'Неправильные e-mail или пароль',
     NOTOKEN_MESSAGE: 'Необходима авторизация',
   },
 };
