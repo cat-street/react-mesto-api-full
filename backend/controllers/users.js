@@ -133,3 +133,16 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.logout = (_req, res, next) => {
+  try {
+    res.cookie('jwt', '', {
+      maxAge: -1,
+      httpOnly: true,
+      sameSite: true,
+    })
+      .send({ message: 'Logged out' });
+  } catch (err) {
+    next(err);
+  }
+};

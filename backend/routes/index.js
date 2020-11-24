@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
-const { login, createUser } = require('../controllers/users');
+const { login, createUser, logout } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 const cardsRouter = require('./cards');
 const userRouter = require('./users');
@@ -25,6 +25,8 @@ router.post('/signup', celebrate({
     avatar: Joi.string().trim().uri(),
   }),
 }), createUser);
+
+router.get('/signout', logout);
 
 router.use('/cards', auth, cardsRouter);
 router.use('/users', auth, userRouter);

@@ -12,6 +12,7 @@ const apiPaths = {
   ME: '/users/me',
   SIGNUP: '/signup',
   SIGNIN: '/signin',
+  SIGNOUT: '/signout',
 };
 
 const apiHeaders = {

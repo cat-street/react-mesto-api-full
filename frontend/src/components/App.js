@@ -52,7 +52,9 @@ function App() {
    * @param {boolean} isInfoOpened состояние скрытого меню в мобильной версии
    */
   const [isInfoOpened, setInfoOpened] = useState(false);
-  const [tooltipMessage, setTooltipMessage] = useState(tooltipErrorMessages.FAILURE);
+  const [tooltipMessage, setTooltipMessage] = useState(
+    tooltipErrorMessages.FAILURE
+  );
 
   const handleEditAvatarClick = () => {
     setEditAvatarPopupOpen(true);
@@ -206,7 +208,7 @@ function App() {
    */
   const setTooltip = (message) => {
     setTooltipMessage(message);
-  }
+  };
 
   async function handleRegistration(evt, resetForm) {
     evt.preventDefault();
@@ -217,7 +219,7 @@ function App() {
         resetForm();
         setRegSuccess(true);
         setTooltip(tooltipErrorMessages.SUCCESS);
-        setNewUser({ password: '', email: '' });
+        setNewUser({ password: '', email: regStatus.email });
         history.push('/sign-in');
       }
     } catch (error) {
@@ -252,7 +254,8 @@ function App() {
     }
   }
 
-  const signOut = () => {
+  async function signOut() {
+    await api.getData(apiPaths.SIGNOUT);
     setIsLoggedIn(false);
     setCards([]);
     setCurrentUser({
@@ -294,10 +297,9 @@ function App() {
        * @param {object} cardsList массив с объектами карточек
        */
       setCards(cardsList);
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
-    };
+    }
   };
 
   useEffect(() => {
