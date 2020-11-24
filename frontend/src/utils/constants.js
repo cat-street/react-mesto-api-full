@@ -6,7 +6,7 @@
  * @param {string} likes путь для добавления/снятия лайка
  */
 const apiPaths = {
-  BASE_URL: 'http://localhost:3000',
+  BASE_URL: 'https://api.catlogic.students.nomoreparties.co',
   CARDS: '/cards',
   LIKES: '/likes',
   ME: '/users/me',

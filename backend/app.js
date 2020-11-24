@@ -16,7 +16,7 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 const corsOptions = {
-  origin: 'http://localhost:3001',
+  origin: 'https://catlogic.students.nomoreparties.co',
   credentials: true,
 };
 
