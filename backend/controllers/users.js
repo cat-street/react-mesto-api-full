@@ -129,7 +129,7 @@ module.exports.login = (req, res, next) => {
         httpOnly: true,
         sameSite: true,
       })
-        .end();
+        .send(user);
     })
     .catch(next);
 };

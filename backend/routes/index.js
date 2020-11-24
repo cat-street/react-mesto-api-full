@@ -6,6 +6,9 @@ const auth = require('../middlewares/auth');
 const cardsRouter = require('./cards');
 const userRouter = require('./users');
 
+router.options('/*', (_req, res) => {
+  res.send();
+});
 router.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().trim().email().required(),
