@@ -28,7 +28,6 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    // .orFail()
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) {

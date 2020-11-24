@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
@@ -14,9 +15,10 @@ const routes = require('./routes');
 const app = express();
 const { PORT = 3000 } = process.env;
 
-const allowedCors = [
-  'http://localhost:3001',
-];
+const corsOptions = {
+  origin: 'http://localhost:3001',
+  credentials: true,
+};
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -25,16 +27,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-  if (allowedCors.includes(origin)) {
-    res.set('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PATCH, PUT, DELETE');
-    res.set('Access-Control-Allow-Headers', 'Content-Type, Origin, Accept, credentials, cookies');
-    res.set('Access-Control-Allow-Credentials', 'true');
-  }
-  next();
-});
+app.use('*', cors(corsOptions));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
