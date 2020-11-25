@@ -27,7 +27,7 @@ mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
   useUnifiedTopology: true,
 });
 
-app.use('*', cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
