@@ -6,9 +6,9 @@ const auth = require('../middlewares/auth');
 const cardsRouter = require('./cards');
 const userRouter = require('./users');
 
-// router.options('/*', (_req, res) => {
-//   res.send();
-// });
+router.options('/*', (_req, res) => {
+  res.send();
+});
 
 router.get('/crash-test', () => {
   setTimeout(() => {
