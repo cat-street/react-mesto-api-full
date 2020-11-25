@@ -16,12 +16,11 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 const corsOptions = {
-  origin: ['https://catlogic.students.nomoreparties.co', 'http://localhost:3001'],
+  origin: ['https://catlogic.students.nomoreparties.co'],
   credentials: true,
 };
 
-// mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
