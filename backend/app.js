@@ -15,11 +15,6 @@ const routes = require('./routes');
 const app = express();
 const { PORT = 3000 } = process.env;
 
-const corsOptions = {
-  origin: 'https://catlogic.students.nomoreparties.co',
-  credentials: true,
-};
-
 mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -27,12 +22,12 @@ mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
   useUnifiedTopology: true,
 });
 
-app.use(cors(corsOptions));
-
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
+
+app.use(cors());
 
 app.use(routes);
 
