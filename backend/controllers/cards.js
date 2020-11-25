@@ -6,7 +6,7 @@ const { requestErrors } = require('../utils/error-messages');
 
 // eslint-disable-next-line no-unused-vars
 module.exports.getCards = (_req, res, next) => {
-  Card.find({})
+  Card.find({}).sort({ createdAt: -1 })
     .then((cards) => res.send(cards))
     .catch(next);
 };
