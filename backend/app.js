@@ -23,7 +23,7 @@ mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
 });
 
 app.use('*', cors({
-  origin: 'https://catlogic.students.nomoreparties.co/',
+  origin: 'https://catlogic.students.nomoreparties.co',
   credentials: true,
 }));
 
