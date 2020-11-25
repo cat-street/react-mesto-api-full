@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
@@ -22,8 +21,21 @@ mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
   useUnifiedTopology: true,
 });
 
-app.use(cors());
-app.options('*', cors());
+const allowedCors = [
+  'https://catlogic.students.nomoreparties.co',
+  'localhost:3000',
+];
+
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Origin, Accept');
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  next();
+});
 
 app.use(cookieParser());
 app.use(bodyParser.json());
