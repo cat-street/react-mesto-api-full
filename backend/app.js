@@ -15,7 +15,7 @@ const routes = require('./routes');
 const app = express();
 const { PORT = 3000 } = process.env;
 
-mongoose.connect('mongodb://127.0.0.1:29186/mesto', {
+mongoose.connect('mongodb://127.0.0.1:27017/mesto', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
