@@ -220,7 +220,7 @@ function App() {
         setRegSuccess(true);
         setTooltip(tooltipErrorMessages.SUCCESS);
         setNewUser({ password: '', email: regStatus.email });
-        history.push('/sign-in');
+        history.push('/signin');
       }
     } catch (error) {
       setTooltip(error.message);
@@ -267,7 +267,7 @@ function App() {
     });
     setNewUser((prevUser) => ({ ...prevUser, password: '' }));
     setTooltip(tooltipErrorMessages.FAILURE);
-    history.push('/sign-in');
+    history.push('/signin');
   };
 
   const checkCookie = useCallback(async () => {
@@ -368,7 +368,7 @@ function App() {
             onCardLike={handleCardLike}
             onCardDelete={handleDeleteClick}
           />
-          <Route path="/sign-up">
+          <Route path="/signup">
             {isLoggedIn ? (
               <Redirect to="/" />
             ) : (
@@ -379,7 +379,7 @@ function App() {
               />
             )}
           </Route>
-          <Route path="/sign-in">
+          <Route path="/signin">
             {isLoggedIn ? (
               <Redirect to="/" />
             ) : (

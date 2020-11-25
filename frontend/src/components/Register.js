@@ -12,7 +12,7 @@ function Register(props) {
     >
       <p className="auth-container__info">
         Уже зарегистрированы?{' '}
-        <Link to="/sign-in" className="link">
+        <Link to="/signin" className="link">
           Войти
         </Link>
       </p>

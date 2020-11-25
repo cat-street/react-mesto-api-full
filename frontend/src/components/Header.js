@@ -23,13 +23,13 @@ function Header({ isLoggedIn, isInfoOpened, setInfoOpened, onSignOut }) {
           </div>
         ) : (
           <Switch>
-            <Route path="/sign-up">
-              <Link className="link header__link" to="/sign-in">
+            <Route path="/signup">
+              <Link className="link header__link" to="/signin">
                 Войти
               </Link>
             </Route>
             <Route path="*">
-              <Link className="link header__link" to="/sign-up">
+              <Link className="link header__link" to="/signup">
                 Регистрация
               </Link>
             </Route>
