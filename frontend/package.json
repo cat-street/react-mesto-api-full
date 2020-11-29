@@ -12,6 +12,8 @@
     "react-scripts": "^4.0.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "scp -r ./build/* root@185.185.71.119:/root/mesto/frontend",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
